@@ -1,0 +1,39 @@
+package com.hutech.coca.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+
+@Setter
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "pet_types")
+@SQLDelete(sql = "UPDATE pet_types SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+public class PetType {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Tên loại thú cưng là bắt buộc")
+    private String name;
+
+    private boolean isActive = true;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt = LocalDateTime.now();
+    @ManyToMany(mappedBy = "petTypes")
+    @JsonIgnore
+    private Set<Service> services;
+}
